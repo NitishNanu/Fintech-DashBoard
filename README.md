@@ -117,7 +117,7 @@ DATABASE_URL=postgresql://<YOUR_POSTGRES_USER>:<YOUR_POSTGRES_PASSWORD>@localhos
 *Example for local default user:*
 ```env
 PORT=5000
-DATABASE_URL=postgresql://postgres:123456789@localhost:5432/fintech_db
+DATABASE_URL=postgresql://postgres:your_password@localhost:5432/fintech_db
 ```
 
 ---
@@ -128,7 +128,7 @@ DATABASE_URL=postgresql://postgres:123456789@localhost:5432/fintech_db
 ```bash
 npm run dev:all
 ```
-This runs both the Express API server and Vite development server simultaneously in one terminal window.
+This runs both the Express API server (`backend/server.js`) and Vite development server simultaneously in one terminal window.
 
 ### Option B: Run in Separate Terminals
 
@@ -159,9 +159,11 @@ fintech-dashboard/
 ├── package.json          # Project metadata, scripts, and dependencies
 ├── vite.config.js        # Vite configuration & proxy rules
 │
-├── server/               # Backend Express Application
-│   ├── db.js             # PostgreSQL connection pool & auto-migration scripts
-│   └── index.js          # REST API endpoints & route handlers
+├── backend/              # Standalone Express API Server (deployable to Render)
+│   ├── package.json      # Backend-specific package definition
+│   ├── .env.example      # Backend environment template
+│   ├── db.js             # PostgreSQL connection pool with Cloud SSL support
+│   └── server.js         # REST API endpoints & route handlers
 │
 └── src/                  # Frontend React Application
     ├── main.jsx          # React DOM root entry point

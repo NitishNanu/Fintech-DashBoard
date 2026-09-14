@@ -4,9 +4,16 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+const connectionString =
+  process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/fintech_db";
+
+const isLocal =
+  connectionString.includes("localhost") ||
+  connectionString.includes("127.0.0.1");
+
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/fintech_db",
-  ssl: process.env.DATABASE_URL?.includes("localhost") ? false : { rejectUnauthorized: false },
+  connectionString,
+  ssl: isLocal ? false : { rejectUnauthorized: false },
 });
 
 // Auto-initialize tables if needed
@@ -40,7 +47,7 @@ export async function initDb() {
       ALTER TABLE user_preferences ADD COLUMN IF NOT EXISTS category_budgets JSONB DEFAULT '{}'::jsonb;
       ALTER TABLE transactions ADD COLUMN IF NOT EXISTS is_recurring BOOLEAN DEFAULT FALSE;
     `);
-    console.log("✓ Connected to PostgreSQL database (fintech_db) and verified schema.");
+    console.log("✓ Connected to PostgreSQL database and verified schema tables.");
   } catch (err) {
     console.error("Error initializing PostgreSQL database tables:", err);
   } finally {

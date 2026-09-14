@@ -13,11 +13,16 @@ import {
   saveCategoryBudgets as fallbackSaveCategoryBudgets,
 } from "./storage.js";
 
-const API_BASE = "/api";
+// Dynamically resolve API URL:
+// - Uses import.meta.env.VITE_API_URL if defined in production (e.g. "https://fintech-api.onrender.com")
+// - Falls back to "/api" (which proxies to localhost:5000 in Vite dev)
+const rawBase = (import.meta.env.VITE_API_URL || "/api").trim().replace(/\/+$/, "");
+const API_BASE = rawBase.endsWith("/api") || rawBase === "/api" ? rawBase : `${rawBase}/api`;
 
 // Helper for HTTP requests
 async function request(endpoint, options = {}) {
-  const url = `${API_BASE}${endpoint}`;
+  const cleanEndpoint = endpoint.startsWith("/") ? endpoint : `/${endpoint}`;
+  const url = `${API_BASE}${cleanEndpoint}`;
   const res = await fetch(url, {
     headers: {
       "Content-Type": "application/json",
